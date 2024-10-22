@@ -1,0 +1,42 @@
+From 61f58806af92419fe892005b6841d565d59777e7 Mon Sep 17 00:00:00 2001
+From: Bzi_Han <rosebzi@foxmail.com>
+Date: Sat, 19 Oct 2024 22:18:22 +0800
+Subject: [PATCH] env: Fix linker detection error in msvc at Chinese
+
+---
+ devkit.py      | 4 ++--
+ env_generic.py | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/devkit.py b/devkit.py
+index ba63856..1d849a0 100644
+--- a/devkit.py
++++ b/devkit.py
+@@ -438,9 +438,9 @@ def call_pkgconfig(argv, meson_config):
+ 
+ 
+ def detect_compiler_argument_syntax(meson_config):
+-    if subprocess.run(meson_config["c"],
++    if "Microsoft " in subprocess.run(meson_config["c"],
+                       capture_output=True,
+-                      encoding="utf-8").stderr.startswith("Microsoft "):
++                      encoding="utf-8").stderr:
+         return "msvc"
+ 
+     return "unix"
+diff --git a/env_generic.py b/env_generic.py
+index 3ca63c0..e0aeb3e 100644
+--- a/env_generic.py
++++ b/env_generic.py
+@@ -259,7 +259,7 @@ def detect_linker_flavor(cc: list[str]) -> str:
+                                     stdout=subprocess.PIPE,
+                                     stderr=subprocess.STDOUT,
+                                     encoding="utf-8").stdout
+-    if linker_version.startswith("Microsoft "):
++    if "Microsoft " in linker_version:
+         return "msvc"
+     if "GNU ld " in linker_version:
+         return "gnu-ld"
+-- 
+2.40.1.windows.1
+

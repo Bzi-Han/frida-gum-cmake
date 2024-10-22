@@ -1,0 +1,12 @@
+# clangd
+.cache
+
+# CMake
+build
+
+# VSCode
+c_cpp_properties.json
+settings.json
+
+# third_party
+third_party/frida-gum

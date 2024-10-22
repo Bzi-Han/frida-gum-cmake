@@ -1,0 +1,44 @@
+From da215dac952dfd81c3f526187dcf109b38a70107 Mon Sep 17 00:00:00 2001
+From: Bzi_Han <rosebzi@foxmail.com>
+Date: Tue, 22 Oct 2024 04:34:08 +0800
+Subject: [PATCH] mkdevkit: Change generate header to support external build
+ dir and GUM_STATIC define
+
+---
+ devkit.py | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/devkit.py b/devkit.py
+index ba63856..bda7edf 100644
+--- a/devkit.py
++++ b/devkit.py
+@@ -115,7 +115,7 @@ class CompilerApplication:
+ 
+             header_files = deduplicate(header_refs)
+             frida_root_slashed = REPO_ROOT.as_posix()
+-            header_files = [Path(h) for h in header_files if bool(re.match("^" + frida_root_slashed, h, re.I))]
++            header_files = [Path(h) for h in header_files if bool(re.match("^" + frida_root_slashed, h, re.I)) or "gumenumtypes.h" in h]
+         else:
+             header_dependencies = subprocess.run(
+                 meson_config["c"] + c_args + include_cflags + ["-E", "-M", umbrella_header_path],
+@@ -124,7 +124,7 @@ class CompilerApplication:
+                 check=True).stdout
+             _, raw_header_files = header_dependencies.split(": ", maxsplit=1)
+             header_files = [Path(item) for item in shlex.split(raw_header_files) if item != "\n"]
+-            header_files = [h for h in header_files if h.is_relative_to(REPO_ROOT)]
++            header_files = [h for h in header_files if h.is_relative_to(REPO_ROOT) or "gumenumtypes.h" in h.name]
+ 
+         devkit_header_lines = []
+         umbrella_header = header_files[0]
+@@ -138,7 +138,7 @@ class CompilerApplication:
+             ingest_header(selinux_header, header_files, processed_header_files, devkit_header_lines)
+         devkit_header = u"".join(devkit_header_lines)
+ 
+-        if package.startswith("frida-gumjs"):
++        if package.startswith("frida-gum"):
+             config = """#ifndef GUM_STATIC
+ # define GUM_STATIC
+ #endif
+-- 
+2.40.1.windows.1
+
