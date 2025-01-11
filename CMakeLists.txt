@@ -126,15 +126,13 @@ ExternalProject_Add(
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/frida-gum
 
     GIT_REPOSITORY https://github.com/frida/frida-gum.git
-    GIT_TAG main
+    GIT_TAG 0afeb85fcdeae1d995a55bc07f0fe57b197aecae
 
     UPDATE_DISCONNECTED ON
     UPDATE_COMMAND
         ${NATIVE_BASH_TOOL} " \
             cd ${CMAKE_CURRENT_SOURCE_DIR}/third_party/frida-gum/releng && \
-            git reset --hard origin/main && \
-            git pull origin main && \
-            git submodule update --init --recursive \
+            git reset --hard 4622f5c4c432d94c1c625e598b120425a68a8414 \
         "
 
     PATCH_COMMAND
